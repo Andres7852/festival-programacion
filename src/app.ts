@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { createPrismaClient } from "./infrastructure/database/prisma-client.js";
 import { PrismaShowsRepository } from "./infrastructure/repositories/prisma-shows.repository.js";
-import { createApp } from "./presentation/http/create-app.js";
+import { createApp } from "./interface/http/create-app.js";
 
 const connectionString = process.env.DATABASE_URL;
 

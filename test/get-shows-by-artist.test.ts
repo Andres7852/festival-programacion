@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ArtistNotFoundError, GetShowsByArtist } from "../src/application/get-shows-by-artist.js";
+import { ArtistNotFoundError, GetShowsByArtist } from "../src/application/use-cases/get-shows-by-artist.js";
 import type { ShowsRepository } from "../src/domain/shows-repository.js";
 import type { Show } from "../src/domain/show.js";
 
@@ -15,10 +15,10 @@ const activeShow: Show = {
 };
 
 test("devuelve los shows activos del artista existente", async () => {
-  const repository: ShowsRepository = {
+  const repository = {
     artistExists: async () => true,
     findActiveByArtistId: async () => [activeShow],
-  };
+  } as unknown as ShowsRepository;
 
   const shows = await new GetShowsByArtist(repository).execute(1);
 
@@ -26,10 +26,10 @@ test("devuelve los shows activos del artista existente", async () => {
 });
 
 test("falla cuando el artista no existe", async () => {
-  const repository: ShowsRepository = {
+  const repository = {
     artistExists: async () => false,
     findActiveByArtistId: async () => [],
-  };
+  } as unknown as ShowsRepository;
 
   await assert.rejects(
     new GetShowsByArtist(repository).execute(999999),

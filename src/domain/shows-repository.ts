@@ -34,9 +34,9 @@ export interface ShowsRepository {
   findMany(filters: ShowFilters, skip: number, take: number): Promise<Show[]>;
   count(filters: ShowFilters): Promise<number>;
 
-  // Validaciones de reglas de negocio
-  hasStageConflict(stageId: number, dayId: number, horaInicio: string, horaFin: string, excludeShowId?: number): Promise<boolean>;
-  hasArtistConflict(artistId: number, dayId: number, excludeShowId?: number): Promise<boolean>;
+  // Consultas para las reglas de negocio (la decisión se toma en application/rules)
+  findActiveByStageAndDay(stageId: number, dayId: number): Promise<Show[]>;
+  findActiveByArtistAndDay(artistId: number, dayId: number): Promise<Show[]>;
 
   // Mutaciones
   create(data: CreateShowData): Promise<Show>;
