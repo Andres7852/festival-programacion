@@ -35,6 +35,16 @@ export class ListShows {
       throw new ValidationError("limit debe ser un entero entre 1 y 50");
     }
 
+    for (const [name, value] of Object.entries({
+      dia_id: input.dia_id,
+      escenario_id: input.escenario_id,
+      artista_id: input.artista_id,
+    })) {
+      if (value !== undefined && (!Number.isInteger(value) || value < 1)) {
+        throw new ValidationError(`${name} debe ser un entero positivo`);
+      }
+    }
+
     const filters: ShowFilters = {};
     if (input.dia_id !== undefined) filters.dia_id = input.dia_id;
     if (input.escenario_id !== undefined) filters.escenario_id = input.escenario_id;
