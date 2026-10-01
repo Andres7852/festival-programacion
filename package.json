@@ -1,12 +1,13 @@
 {
   "name": "festival-programacion",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Módulo 01 Programación de shows — Festival Picnic 2026",
+  "main": "src/app.ts",
   "scripts": {
-    "test": "node --import tsx --test",
-    "dev": "nodemon --ext ts,json --exec 'tsx ./src/app.ts'",
-    "sync": "npx prisma db pull && npx prisma generate"
+    "dev": "nodemon --ext ts,json --exec \"tsx ./src/app.ts\"",
+    "sync": "npx prisma db pull && npx prisma generate",
+    "test": "node --import tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
