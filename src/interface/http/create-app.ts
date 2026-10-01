@@ -1,32 +1,34 @@
 import express from "express";
-import { ArtistNotFoundError, GetShowsByArtist } from "../../application/get-shows-by-artist.js";
+import cors from "cors";
 import type { ShowsRepository } from "../../domain/shows-repository.js";
+import { ListShows } from "../../application/use-cases/list-shows.js";
+import { GetShowById } from "../../application/use-cases/get-show-by-id.js";
+import { GetShowsByArtist } from "../../application/use-cases/get-shows-by-artist.js";
+import { CreateShow } from "../../application/use-cases/create-show.js";
+import { UpdateShow } from "../../application/use-cases/update-show.js";
+import { DeleteShow } from "../../application/use-cases/delete-show.js";
+import { ShowsController } from "./shows.controller.js";
+import { createShowsRouter } from "./shows.routes.js";
+import { errorHandler, notFoundHandler } from "./error-handler.js";
 
 export function createApp(showsRepository: ShowsRepository) {
   const app = express();
-  const getShowsByArtist = new GetShowsByArtist(showsRepository);
+  app.use(cors());
+  app.use(express.json());
 
-  app.get("/api/shows/artista/:artistaId", async (request, response) => {
-    const rawArtistId = request.params.artistaId;
-    const artistId = Number(rawArtistId);
-
-    if (!/^[1-9]\d*$/.test(rawArtistId) || !Number.isSafeInteger(artistId)) {
-      response.status(400).json({ error: "artistaId debe ser un entero positivo" });
-      return;
-    }
-
-    try {
-      const shows = await getShowsByArtist.execute(artistId);
-      response.status(200).json({ data: shows });
-    } catch (error) {
-      if (error instanceof ArtistNotFoundError) {
-        response.status(404).json({ error: error.message });
-        return;
-      }
-
-      response.status(500).json({ error: "Error interno del servidor" });
-    }
+  const controller = new ShowsController({
+    listShows: new ListShows(showsRepository),
+    getShowById: new GetShowById(showsRepository),
+    getShowsByArtist: new GetShowsByArtist(showsRepository),
+    createShow: new CreateShow(showsRepository),
+    updateShow: new UpdateShow(showsRepository),
+    deleteShow: new DeleteShow(showsRepository),
   });
+
+  app.use("/api/shows", createShowsRouter(controller));
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 }

@@ -4,7 +4,7 @@ import test from "node:test";
 import type { AddressInfo } from "node:net";
 import type { ShowsRepository } from "../src/domain/shows-repository.js";
 import type { Show } from "../src/domain/show.js";
-import { createApp } from "../src/presentation/http/create-app.js";
+import { createApp } from "../src/interface/http/create-app.js";
 
 const activeShow: Show = {
   id: 1,
@@ -17,10 +17,10 @@ const activeShow: Show = {
 };
 
 test("GET shows por artista responde con datos y valida el id", async () => {
-  const repository: ShowsRepository = {
-    artistExists: async (artistId) => artistId === 1,
+  const repository = {
+    artistExists: async (artistId: number) => artistId === 1,
     findActiveByArtistId: async () => [activeShow],
-  };
+  } as unknown as ShowsRepository;
   const server = createApp(repository).listen(0);
   await once(server, "listening");
   const address = server.address() as AddressInfo;
